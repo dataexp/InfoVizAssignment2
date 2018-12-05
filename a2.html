@@ -528,26 +528,9 @@ div.label_content {
                     data['Global_Competitiveness_Index']=+data['Global_Competitiveness_Index'];
                     data['GDP']=+data['GDP'];
                     // Assign  the data object loaded to the global dataset variable
-                    dataset = data;        
-                    
-                    add_option(dataset);
-                     d3.select(".selectChart")
-                       .selectAll("input")
-                      .data(dataset)
-                      .enter()
-                      .append('label')
-                      .filter(function(d){ return d.Year==2008;})
-                      .attr('for',function(d,i){ return 'a'+i; })
-                      .html(function(d) { return "<br/>"+d.Country; })
-                      .append("input")
-                      //.attr("checked", true)
-                      .attr("type", "checkbox")
-                      .attr("class","myCheckbox")
-                      .attr("id", function(d,i) { return d.Country; })
-                                ;
- 
-                    //    
-                       generateVis();
+                    dataset = data;
+
+                    generateVis();
                                         
                     d3.select("#rangeBar")
                       .on("click", function() { 
