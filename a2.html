@@ -119,9 +119,13 @@ div.label_content {
 			                   ;
 			// the canvas which plot the trace
             var traceCanvas=svg.append("g");
+
+            // var xScale = d3.scaleLinear()
+        				// .domain([0,158516])
+            // 			.range([0,svg_width]);
             var xScale=d3.scaleLinear()
-			             .domain([0,500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000])
-						 .range([0,40, 120, 200, 280, 360, 440, 520, 600, 680]);	
+			             .domain([0,500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000,200000])
+						 .range([0,40, 120, 200, 280, 360, 440, 520, 600, 640,680]);	
 			var yScale=d3.scaleLinear()
 			             .domain([0,6])
 						 .range([svg_height,0], 0.1);
@@ -135,7 +139,6 @@ div.label_content {
 			              .scale(xScale)
 				 		  //.ticks(15)
 				 		  .tickValues([0,500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000])
-				 		  
 				 		  .tickFormat(d3.format(",.0s"))
 						  ;	
 			//Define Y axis
@@ -147,8 +150,7 @@ div.label_content {
 					.attr("class", "axis")
 					.attr("id", "x-axis")
 					.attr("transform", "translate(0," + (svg_height) + ")")
-					.call(xAxis)
-					;
+					.call(xAxis);
 					
 			// Call the y axis
 			svg.append("g")
@@ -185,7 +187,7 @@ div.label_content {
                .attr("text-anchor", "end")
                .attr("x", svg_width)
                .attr("y", svg_height+30)
-               .text("income per capita, inflation-adjusted (dollars)");
+               .text("GDP - income per capita, inflation-adjusted (dollars)");
             // Add a y-axis label.
             svg.append("text")
                .attr("class", "y label")
@@ -193,7 +195,7 @@ div.label_content {
                .attr("y", 6)
                .attr("dy", ".75em")
                .attr("transform", "rotate(-90)")
-               .text("life expectancy (years)");   
+               .text("Global Competitiveness Index");   
             
 			
 			//write function that easy to return value from dataset	
@@ -234,7 +236,7 @@ div.label_content {
 				// Update the display of existing elelemnts to mathc new data
 	  	       // Perform a data join and add points to the chart  
                    dot.transition()
-				      .duration(500)
+				      .duration(1000)
 					  .ease(d3.easeBounce)
 					  .style("z-index","5")
 					  .style("stroke", "black") 
@@ -541,7 +543,7 @@ function getColumnName(location)
 						}
 														
 					  	generateVis();
-					}, 700);
+					}, 1500);
 				$("#startButton").val("stop");
             }
 			 }
@@ -562,7 +564,7 @@ function getColumnName(location)
 					// Assign  the data object loaded to the global dataset variable
 					dataset = data;		
 					
-					add_option(dataset)
+					add_option(dataset);
 				 	d3.select(".selectChart")
 				 	  .selectAll("input")
                       .data(dataset)
@@ -692,13 +694,13 @@ function getColumnName(location)
 			// Call the y axis
 			svgbar.append("g")
 				.attr("class", "axis")
-				.attr("id", "y-axis")
+				.attr("id", "y-axisbar")
 				.call(yBarAxis);
 					
 			// All but call the x-axis
 			svgbar.append("g")
 				.attr("class", "axis")
-				.attr("id", "x-axis")
+				.attr("id", "x-axisbar")
 				.attr("transform", "translate(0," + svgbar_height + ")")
 				.call(xBarAxis);	
        </script>
