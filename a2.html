@@ -11,7 +11,6 @@
   fill: #ddd;
   z-index:-10;
 }
-
 div.label_content {
   position: absolute;
   text-align: center;
@@ -28,8 +27,6 @@ div.label_content {
    position: relative; top: 50px; 
    font-size: 12px;
 	}
-
-
 .countrynames{
 	visibility:hidden;
 	}
@@ -78,8 +75,8 @@ div.label_content {
 			var svg2_height = height2 - margin.top - margin.bottom;			
 			display_year = 2007;
 			country="China";	
-			barcountry1 = "China";
-			barcountry2 = "India";
+			barcountry1 = "";
+			barcountry2 = "";
 			
 			//the information in the bubble when mouseover		
 			var labelInfo = d3.select(".mainBody")
@@ -182,7 +179,6 @@ div.label_content {
 				//.attr("transform", "translate(" + 0 + "," + svg_width + ")")
                 .call(gridlinesY); 	
 			// add line end	
-
 			// Add an x-axis label.
             svg.append("text")
                .attr("class", "x label")
@@ -190,7 +186,6 @@ div.label_content {
                .attr("x", svg_width)
                .attr("y", svg_height+30)
                .text("income per capita, inflation-adjusted (dollars)");
-
             // Add a y-axis label.
             svg.append("text")
                .attr("class", "y label")
@@ -222,15 +217,9 @@ div.label_content {
 			function generateVis(){
 			  
 				var filtered_datset = dataset.filter(yearFilter);
-				
-				//addbars(filtered_datset.filter(barCountry1Filter),0,1);
-				svgbar.selectAll("rect").remove();
-				for(pillarIndex=0;pillarIndex<12; pillarIndex++)
-				{
-					addbars(filtered_datset.filter(barCountry1Filter),pillarIndex,1);
-					addbars(filtered_datset.filter(barCountry2Filter),pillarIndex,2);
 
-				}
+				display_bars()
+				
 				
 			 	 /******** PERFORM DATA JOIN ************/   
 			  	 // Join new data with old elements, if any.				
@@ -256,9 +245,7 @@ div.label_content {
                           d3.selectAll(".myCheckbox").each(function(d,i){
                           cb = d3.select(this);
                           if(cb.property("checked")){
-
                           choices.push(cb.property("id"));
-
 			                                        }		  
                                  });
 		                  if(choices.includes(d.Country)||choices.length==0){
@@ -293,7 +280,7 @@ div.label_content {
 		                         return "1";
 		                        }else{
 			                     return "0.3";
-			                             }
+			                             }	
 						  })
 				      .call(position)
 				      //define the function when mouseover, it will display more detailed information about this country
@@ -367,6 +354,66 @@ div.label_content {
       
        		
 			}
+
+			function display_bars()
+       	{
+				svgbar.selectAll("rect").remove();
+				for(pillarIndex=0;pillarIndex<12; pillarIndex++)
+				{
+					addbars(dataset.filter(yearFilter).filter(barCountry1Filter),pillarIndex,1);
+					addbars(dataset.filter(yearFilter).filter(barCountry2Filter),pillarIndex,2);
+				}
+       	}
+       	
+       	function add_option(dataset)
+    {
+    	//console.log(dataset)
+      var select = d3.select(".optionItems")
+      .append("div")
+        .text("Select Country 1")
+        .append("select")
+        .property("selected", function(d){ return (d === "India"); })
+        
+        select
+        .on("change", function(d) {
+          var value = d3.select(this).property("value");
+          barcountry1 = value;
+
+          display_bars()
+        });
+
+        select.append("option").text("select").attr("value", '');
+
+
+        select.selectAll("option1")
+        .data(d3.map(dataset, function(d){return d.Country;}).keys())
+        .enter()
+        .append("option")
+        .attr("value", function (d) { return d; })
+        .text(function (d,i) {
+         return d; })
+        ;
+
+        var select2 = d3.select(".optionItems")
+        .append("div")
+        .text("Select Country 2")
+        .append("select")
+
+        select2
+        .on("change", function(d) {
+          var value = d3.select(this).property("value");
+          barcountry2 = value;
+          display_bars()
+        });
+        select2.append("option").text("select").attr("value", '');;
+        select2.selectAll("option1")
+        .data(d3.map(dataset, function(d){return d.Country;}).keys())
+        .enter()
+        .append("option")
+        .attr("value", function (d) { return d; })
+        .text(function (d,i) {
+         return d; });
+    }
 			
 function getColumnName(location)
 			{
@@ -420,9 +467,7 @@ function getColumnName(location)
 				   .data(filtered_datset_country, function key(d) {
 											return column_name;
 										});
-
 				/******** HANDLE UPDATE SELECTION ************/
-
 				// Update the display of existing elelemnts to match new data
 				var bar_width = 30;
 				var total_width = 80;
@@ -447,7 +492,6 @@ function getColumnName(location)
 						return "Blue";
 					else
 						return "Green";});
-
 				/******** HANDLE ENTER SELECTION ************/
 				// Create new elements in the dataset
 				bars.enter()
@@ -472,7 +516,6 @@ function getColumnName(location)
 						return "Blue";
 					else
 						return "Green";});
-
 				/******** HANDLE EXIT SELECTION ************/
 				// Remove bars that not longer have a matching data eleement
 				bars.exit().remove();
@@ -519,6 +562,7 @@ function getColumnName(location)
 					// Assign  the data object loaded to the global dataset variable
 					dataset = data;		
 					
+					add_option(dataset)
 				 	d3.select(".selectChart")
 				 	  .selectAll("input")
                       .data(dataset)
@@ -535,7 +579,6 @@ function getColumnName(location)
                             	;
  
 					//	
-
                    	generateVis();
 										
 					d3.select("#rangeBar")
@@ -582,7 +625,6 @@ function getColumnName(location)
 			**/
 			}  
 			//end
-
 		</script>
      <br/>
      <input type="button" id="startButton" value="start" onclick="run()"/>     
@@ -604,12 +646,14 @@ function getColumnName(location)
     
     <div style="width: 300px; height: 700px;  left: 30px; ">
     <div class="barchart" >
+    <h3>Choose Countries</h3>
+    <div class="optionItems"></div>
     <h3>Country wise demographics</h3>
+
        <script>
+
        	        var margin = {top: 10, right: 20, bottom: 80, left: 30};
-
 	   
-
 			var outer_width = 1000;
 			var outer_height = 200;
 			var svgbar_width = outer_width - margin.left - margin.right;
