@@ -28,20 +28,8 @@ div.label_content {
    position: relative; top: 50px; 
    font-size: 12px;
 	}
-.barchart2{
-	
-	width: 300px;
-	height:350px;
-    
-	
-	}
-.barchart3{
-	
-	width: 300px;
-	height:350px;
-	
-	position:relative;  top: 20px;
-	}
+
+
 .countrynames{
 	visibility:hidden;
 	}
@@ -240,6 +228,8 @@ div.label_content {
 				for(pillarIndex=0;pillarIndex<12; pillarIndex++)
 				{
 					addbars(filtered_datset.filter(barCountry1Filter),pillarIndex,1);
+					addbars(filtered_datset.filter(barCountry2Filter),pillarIndex,2);
+
 				}
 				
 			 	 /******** PERFORM DATA JOIN ************/   
@@ -371,144 +361,7 @@ div.label_content {
 						.ease(d3.easeBounce);
 		 /**dot.append("title")
 		.text(function(d,i){return "Country Name:"+theNation(d)+"\n"+"GDP:"+x(d)+"\n"+"Life Expectancy"+y(d);});    **/
-		           //part 2
-			   var nest=d3.nest()
-					           .key(function(d){
-								   return d.Region;
-								   })
-								.rollup(function(d){
-									return d.length;
-									})
-								.entries(filtered_datset);
-								//console.log(display_year);
-						//console.log(nest);
-				   // Join new data with old elements, if any.
-			  	var bars2 = svg2.selectAll("rect")
-				   .data(nest, function(d) {
-											return d.key;
-										});
-			
-			 	/******** HANDLE UPDATE SELECTION ************/
-			  	// Update the display of existing elelemnts to mathc new data
-			  	bars2
-					.transition()
-					.duration(200)
-					
-					.attr("x", function(d) {
-				   		return x2Scale(d.key);
-				   })
-				   .attr("y", function(d) {
-				   		return y2Scale(d.value) ;
-				   })
-				   .attr("width", x2Scale.bandwidth())
-				   .attr("height", function(d) {
-				   		return svg2_height - y2Scale(d.value);
-				   })
-				   .style("fill", "Green");
-					   
-			
-				/******** HANDLE ENTER SELECTION ************/
-			  	// Create new elements in the dataset
-			  	bars2.enter()
-				   .append("rect")
-					.transition()
-					.duration(200)
-					
-				   .attr("x", function(d, i) {
-				   		return x2Scale(d.key);
-				   })
-				   .attr("y", function(d) {
-				   		return y2Scale(d.value) ;
-				   })
-				   .attr("width", x2Scale.bandwidth())
-				   .attr("height", function(d) {
-				   		return svg2_height - y2Scale(d.value);
-				   })
-				   .style("fill", "Blue");
-			
-				/******** HANDLE EXIT SELECTION ************/
-				// Remove bars that not longer have a matching data eleement
-				bars2.exit()
-					.transition()
-					.duration(200)
-					.ease(d3.easeBounce)
-					.style("fill", "red")
-				   	.attr("y", function(d) {
-				   		return svg2_height;
-				   })
-				   .attr("height", 0)
-					.remove();
-					//part 3
-				   var nest3=d3.nest()
-					           .key(function(d){
-								   return d.Government;
-								   })
-								.rollup(function(d){
-									return d.length;
-									})
-								.entries(filtered_datset);
-							//	console.log(display_year);
-						//console.log(nest);
-				   // Join new data with old elements, if any.
-			  	var bars3 = svg3.selectAll("rect")
-				           .data(nest3, function(d) {
-											return d.key;
-										});
-			
-			 	/******** HANDLE UPDATE SELECTION ************/
-			  	// Update the display of existing elelemnts to mathc new data
-			  	bars3
-					.transition()
-					.duration(200)
-					
-					.attr("x", function(d) {
-				   		return x3Scale(d.key);
-				   })
-				   .attr("y", function(d) {
-				   		return y3Scale(d.value) ;
-				   })
-				   .attr("width", x3Scale.bandwidth())
-				   .attr("height", function(d) {
-				   		return svg2_height - y3Scale(d.value);
-				   })
-				   .style("fill", "Green");
-					   
-			
-				/******** HANDLE ENTER SELECTION ************/
-			  	// Create new elements in the dataset
-			  	bars3.enter()
-				   .append("rect")
-					.transition()
-					.duration(200)
-					
-				   .attr("x", function(d, i) {
-				   		return x3Scale(d.key);
-				   })
-				   .attr("y", function(d) {
-				   		return y3Scale(d.value) ;
-				   })
-				   .attr("width", x3Scale.bandwidth())
-				   .attr("height", function(d) {
-				   		return svg2_height - y3Scale(d.value);
-				   })
-				   .style("fill", "Blue");
-			
-				/******** HANDLE EXIT SELECTION ************/
-				// Remove bars that not longer have a matching data eleement
-				bars3.exit()
-					.transition()
-					.duration(200)
-					.ease(d3.easeBounce)
-					.style("fill", "red")
-				   	.attr("y", function(d) {
-				   		return svg2_height;
-				   })
-				   .attr("height", 0)
-					.remove();
-				   dot.exit().remove();	
-				   texts.exit().remove();		
-				   
-				   d3.select("#rangeBar").property("value",display_year)
+		        d3.select("#rangeBar").property("value",display_year)
 				   d3.select("#year_header").text(display_year)	
 				   
       
@@ -571,35 +424,54 @@ function getColumnName(location)
 				/******** HANDLE UPDATE SELECTION ************/
 
 				// Update the display of existing elelemnts to match new data
+				var bar_width = 30;
+				var total_width = 80;
+				
 				bars.transition()
 					.attr("x", function(d, i) {
-						return location * 50;
+					start_pos = location * total_width;
+					if(country_pos == 1)
+						return start_pos;
+					else
+						return start_pos+bar_width+5;
 				   })
 				   .attr("y", function(d) {
 						return yBarScale(+d[column_name])
 				   })
-				   .attr("width", 40)
+				   .attr("width", bar_width)
 				   .attr("height", function(d) {
 						return svgbar_height - yBarScale(+d["1st_pillar_Institutions"]);
 				   })
-				   .style("fill", "Green");
+				   .style("fill", function(d, i){
+				   if(country_pos == 1)
+						return "Blue";
+					else
+						return "Green";});
 
 				/******** HANDLE ENTER SELECTION ************/
 				// Create new elements in the dataset
 				bars.enter()
 				   .append("rect")
 					.attr("x", function(d, i) {
-						return location*50;
+						start_pos = location * total_width;
+					if(country_pos == 1)
+						return start_pos;
+					else
+						return start_pos+bar_width+5;
 				   })
 				   .attr("y", function(d) {
 						return yBarScale(+d[column_name]) ;
 				   })
-				   .attr("width", 40)
+				   .attr("width", bar_width)
 				   .attr("height", function(d) {
 						return svgbar_height - yBarScale(+d[column_name]
 				);
 				   })
-				   .style("fill", "Blue");
+				   .style("fill", function(d, i){
+				   if(country_pos == 1)
+						return "Blue";
+					else
+						return "Green";});
 
 				/******** HANDLE EXIT SELECTION ************/
 				// Remove bars that not longer have a matching data eleement
@@ -646,29 +518,7 @@ function getColumnName(location)
 					data['GDP']=+data['GDP'];
 					// Assign  the data object loaded to the global dataset variable
 					dataset = data;		
-					// Update the domain of the x scale
-					x2Scale.domain(dataset.map(function(d) { return d.Region; }));
-					// Call the x-axis
-					svg2.select("#x-axis2").call(x2Axis)
-					    .selectAll("text")
-						 .attr("dx", "-4em")
-                         .attr("dy", ".5em")
-                         .attr("transform", "rotate(-65)");
-					// Call the x-axis
-					svg2.select("#y-axis2").call(y2Axis);
-					//chart 3
-					// Update the domain of the x scale
-					x3Scale.domain(dataset.map(function(d) { return d.Government; }));
-					// Call the x-axis
-					svg3.select("#x-axis3").call(x3Axis)
-					    .selectAll("text")
-						 .attr("dx", "-4em")
-                         .attr("dy", ".5em")
-                         .attr("transform", "rotate(-65)");
-					// Call the x-axis
-					svg3.select("#y-axis3").call(y3Axis);	
-					// extra function, there's a checkbox which display the country in the label
-					//when you choose one in the non static chart, it will display the checked country only
+					
 				 	d3.select(".selectChart")
 				 	  .selectAll("input")
                       .data(dataset)
@@ -752,25 +602,20 @@ function getColumnName(location)
 -->
     </div>
     
-    <div style="width: 300px; height: 700px; float: left; position: relative; left: 30px; ">
-    <div class="barchart2" >
-    <h3>The number of countries per region</h3>
+    <div style="width: 300px; height: 700px;  left: 30px; ">
+    <div class="barchart" >
+    <h3>Country wise demographics</h3>
        <script>
        	        var margin = {top: 10, right: 20, bottom: 80, left: 30};
 
-	   //the main canva width
-			var width2=250;
-			//the chart2 canva's height
-			var height2=320;
-			var svg2_width = width2 - margin.left - margin.right;
-			var svg2_height = height2 - margin.top - margin.bottom;	
+	   
 
-			var outer_width = 650;
+			var outer_width = 1000;
 			var outer_height = 200;
 			var svgbar_width = outer_width - margin.left - margin.right;
 			var svgbar_height = outer_height - margin.top - margin.bottom;	
 						
-		var svgbar = d3.select(".barchart2")
+		var svgbar = d3.select(".barchart")
 						.append("svg")
 						.attr("width", svgbar_width + margin.left + margin.right)
 						.attr("height", svgbar_height + margin.top + margin.bottom)
@@ -811,92 +656,11 @@ function getColumnName(location)
 				.attr("class", "axis")
 				.attr("id", "x-axis")
 				.attr("transform", "translate(0," + svgbar_height + ")")
-				.call(xBarAxis);
-	   //
-	       var svg2 = d3.select(".barchart2")
-						.append("svg")
-						//.style("background", "aliceblue")
-						.attr("width", svg2_width + margin.left + margin.right)
-						.attr("height", svg2_height + margin.top + margin.bottom)
-						.append("g")
-						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-			var y2Scale = d3.scaleLinear()
-				             .domain([0,80])        
-				                     .range([svg2_height, 0]);
-	
-			// Create a scale object to nicely take care of positioning bars along the horizontal axis
-			// We don't set the domain yet as data isn't loaded
-			var x2Scale = d3.scaleBand()
-							.range([0, svg2_width], 0.1)
-							.paddingInner(0.05)
-							.paddingOuter(0.05);
-						
-			//Define Y axis
-			var y2Axis = d3.axisLeft()
-							  .scale(y2Scale)
-							  .ticks(5);
-			
-			// Create an x-axis connected to the x scale
-			var x2Axis = d3.axisBottom()
-						 .scale(x2Scale);
-			// Call the y axis
-			svg2.append("g")
-				.attr("class", "axis2")
-				.attr("id", "y-axis2")
-				;
-					
-			// All but call the x-axis
-			svg2.append("g")
-				.attr("class", "axis2")
-				.attr("id", "x-axis2")
-				.attr("transform", "translate(0," + svg2_height + ")");
-			
+				.call(xBarAxis);	
        </script>
     </div>
     
-    <div class="barchart3">
-    <h3>The number of countries with each government type</h3>
-    <script>
-       var svg3 = d3.select(".barchart3")
-						.append("svg")
-						//.style("background", "aliceblue")
-						.attr("width", svg2_width + margin.left + margin.right)
-						.attr("height", svg2_height + margin.top + margin.bottom)
-						.append("g")
-						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-	   // part3
-			var y3Scale = d3.scaleLinear()
-				             .domain([0,150])        
-				                     .range([svg2_height, 0]);
-	
-			// Create a scale object to nicely take care of positioning bars along the horizontal axis
-			// We don't set the domain yet as data isn't loaded
-			var x3Scale = d3.scaleBand()
-							.range([0, svg2_width], 0.1)
-							.paddingInner(0.05)
-							.paddingOuter(0.05);
-						
-			//Define Y axis
-			var y3Axis = d3.axisLeft()
-							  .scale(y3Scale)
-							  .ticks(5);
-			
-			// Create an x-axis connected to the x scale
-			var x3Axis = d3.axisBottom()
-						 .scale(x3Scale);
-			// Call the y axis
-			svg3.append("g")
-				.attr("class", "axis3")
-				.attr("id", "y-axis3")
-				;
-					
-			// All but call the x-axis
-			svg3.append("g")
-				.attr("class", "axis3")
-				.attr("id", "x-axis3")
-				.attr("transform", "translate(0," + svg2_height + ")");
-			
-       </script>
+    
     </div>
 </div>
 </body>	 
