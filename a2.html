@@ -1,3 +1,18 @@
+<!-- 
+Chanelling Hans
+Assignment 2
+
+Developed by
+Nitin Barthwal
+Id:18200684
+
+Nipun Jain
+Student ID:18200480
+
+Neeti Jain
+182000683
+University College Dublin-->
+
 <!DOCTYPE html>
 <html lang = "en" class="tas-com">
 <head>
@@ -41,11 +56,9 @@ div.label_content {
 }
     </style>
     <script type="text/javascript" src="./d3/d3.v4.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./js/jquery-1.4.2.js"></script>
+
 </head>
 <body>
-
-    
     <div style="width: 1400px; ">
     <div class="mainBody" style="float:left">
     
@@ -124,7 +137,7 @@ div.label_content {
                          .range([svg_height,0], 0.1);
             //    the radius related                      
             var radiusScale = d3.scaleSqrt()
-                                .domain([0, 1000000000])
+                                .domain([0, 1386395000])
                                 .range([0, 50]);
             var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
             // Create an x-axis connected to the x scale
@@ -314,14 +327,14 @@ div.label_content {
                                                      .data(cdata)
                                                      .enter()
                                                      .append("circle")
-                                                     .attr("id", "countrytrace")
-													 .each(function(d,i){  
+                                                     .attr("id", "countrytrace").each(function(d,i){  
                                                          d3.select(this)
                                                            .data([cdata[i]])
                                                            .attr("cx",xScale(x(d)))
                                                            .attr("cy",yScale(y(d)))
                                                            .attr("r", radiusScale(radius(d)))
                                                            .style("fill",colorScale(color(d)))
+                                                           .style("stroke", "black") 
                                                            .append("title")
                                                            .text(d.Country+" "+d.Year+":"+x(d))
                                                          });
@@ -483,24 +496,24 @@ div.label_content {
          function startstopClick(){
                 if(i){
                 clearInterval(i);
-                $("#startButton").val("start");
+				document.getElementById("startButton").setAttribute("value", "Start");
+
                 i=null;
             }else{
-                
-                i = setInterval(function() {
-                        //country=null;
-                        traceCanvas.selectAll("#countrytrace").remove();
-                        d3.selectAll(".circles")
-                          .style("opacity", 1);
-                                display_year++;
-                                                    
-                            if(display_year > 2017){
-                            display_year = 2007;
-                        }
-                                                        
-                          generateVis();
-                    }, 1500);
-                $("#startButton").val("stop");
+					i = setInterval(function() {
+					traceCanvas.selectAll("#countrytrace").remove();
+					d3.selectAll(".circles")
+					.style("opacity", 1);
+					display_year++;
+
+					if(display_year > 2017){
+						display_year = 2007;
+					}                                   
+					generateVis();
+				}, 1500);
+				document.getElementById("startButton").setAttribute("value", "Stop");
+
+
             }
              }
             
@@ -548,12 +561,11 @@ div.label_content {
                 }
         </script>
      <br/>
-     <input type="button" id="startButton" value="start" onclick="startstopClick()"/>     
+     <input type="button" id="startButton" value="Start" onclick="startstopClick()"/>     
      <input type="range" name="points" min="2007" max="2017" step="1" value="0" id="rangeBar" style="width:650px">
      
     </div>
     <div class="selectChartBody" style=" float: left;">
-        
         <span class="labelButton">choose to display/undisplay the country label:</span>
         <input type="button" class="labelButton" value="Country label" onclick="labelShow()"/> 
         <br/>
