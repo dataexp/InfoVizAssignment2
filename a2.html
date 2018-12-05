@@ -39,13 +39,6 @@ div.label_content {
     float: left;
     position: relative; top: 50px;
 }
-.selectChart{
-    float: left;
-    width: 200px;
-    height: 420px;
-    overflow: auto;
-    position: relative; 
-}
     </style>
     <script type="text/javascript" src="./d3/d3.v4.js" charset="utf-8"></script>
     <script type="text/javascript" src="./js/jquery-1.4.2.js"></script>
@@ -57,10 +50,10 @@ div.label_content {
     <div class="mainBody" style="float:left">
     
        <h1 style="font-weight:bold">GapMinder World</h1>
-          <h3>Mapping the Wealth and Health of Nations</h3>
+          <h3>Mapping the Wealth and Global Competitiveness Index of Nations</h3>
           <script type="text/javascript">
             // Define margins            
-            var margin = {top: 10, right: 20, bottom: 80, left: 30};
+            var margin = {top: 10, right: 20, bottom: 80, left: 40};
             //the main canva width
             var width1=720;
             //the main canva width
@@ -133,7 +126,7 @@ div.label_content {
             var radiusScale = d3.scaleSqrt()
                                 .domain([0, 1000000000])
                                 .range([0, 50]);
-            var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+            var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
             // Create an x-axis connected to the x scale
             var xAxis = d3.axisBottom()
                           .scale(xScale)
@@ -192,11 +185,17 @@ div.label_content {
             svg.append("text")
                .attr("class", "y label")
                .attr("text-anchor", "end")
-               .attr("y", 6)
+               .attr("y", -margin.left)
                .attr("dy", ".75em")
                .attr("transform", "rotate(-90)")
                .text("Global Competitiveness Index");   
             
+			svg.append("text")
+				.attr("id","heading")
+				.attr("x", 5)
+               .attr("y", 5)
+               .attr("dy", ".75em")
+               .text("Gapminder World");   
             
             //write function that easy to return value from dataset    
             function x(d) { return d.GDP; }
@@ -231,8 +230,7 @@ div.label_content {
                  //another canvas to mark the label around the bubble
                 var texts=chartCanvas.selectAll("text")
                                      .attr("class", "countrynames")
-                                     .data(filtered_datset,function(d){return theNation(d); })
-                                     ;
+                                     .data(filtered_datset,function(d){return theNation(d); });
                 // Update the display of existing elelemnts to mathc new data
                  // Perform a data join and add points to the chart  
                    dot.transition()
@@ -243,7 +241,6 @@ div.label_content {
                       .style("stroke-opacity",0.5)
                       .style("fill-opacity",function(d){
                           var choices = [];
-                          
                           d3.selectAll(".myCheckbox").each(function(d,i){
                           cb = d3.select(this);
                           if(cb.property("checked")){
@@ -256,16 +253,15 @@ div.label_content {
                                      return "0.3";
                                        }
                                          })
-                      .style("fill",function(d) {     
-                      return colorScale(color(d));                        
-                      })                     
-                      .call(position)                      
-                      ;
+                      .style("fill",function(d) {   
+                      return colorScale(color(d));
+                      })
+                      .call(position);
                     texts.transition()
                         .duration(500)
                         .ease(d3.easeBounce)
                         .call(textposition); 
-                // Create new elements in the dataset                  
+                // Create new elements in the dataset
                    dot.enter()
                       .append("circle")
                       .attr("class", "circles")
@@ -289,14 +285,13 @@ div.label_content {
                       .on("mouseover",function(d){
                           //if(i==null){}
                           labelInfo.style("opacity", 0.9);
-                          labelInfo.html("Country Name:"+d.Country
+                          labelInfo.html("Country:"+d.Country
                                            +"<br/>"+"Region:"+d.Region
-                                         +"<br/>"+"Global_Competitiveness_Index:"+d.Global_Competitiveness_Index
+                                         +"<br/>"+"GCI:"+d.Global_Competitiveness_Index
                                          +"<br/>"+"population:"+ d.Population
                                          +"<br/>"+"GDP:"+ d.GDP)
                                    .style("left", (d3.event.pageX) + "px")
                                    .style("top", (d3.event.pageY - 28) + "px");
-                        //  console.log(labelInfo);                                    
                           })  
                       // when mouse is leave, the label is gone
                       .on("mouseout", function(d) {
@@ -310,30 +305,30 @@ div.label_content {
                                  country=d.Country;
                                  //filter the country
                                 var cdata=dataset.filter(countryFilter);
+								d3.selectAll(".circles").style("opacity", 0.2);
+								d3.selectAll(".countrynames")
+								   .style("visibility", "hidden");
+                                 }
+
                                 var trace=traceCanvas.selectAll("circle")    
                                                      .data(cdata)
                                                      .enter()
-                                                     .append("circle")    
-                                                     .attr("id", "countrytrace")                                                                                                      .each(function(d,i){
-                                                         d3.selectAll(".circles")
-                                                         .style("opacity", 0);
-                                                         d3.selectAll(".countrynames")
-                                                           .style("visibility", "hidden");
+                                                     .append("circle")
+                                                     .attr("id", "countrytrace")
+													 .each(function(d,i){  
                                                          d3.select(this)
-                                                           .datum([cdata[i]])                                                
+                                                           .data([cdata[i]])
                                                            .attr("cx",xScale(x(d)))
                                                            .attr("cy",yScale(y(d)))
-                                                           .attr("r",
-                                                             radiusScale(radius(d)))
+                                                           .attr("r", radiusScale(radius(d)))
                                                            .style("fill",colorScale(color(d)))
-                                                           .style("stroke", "black") 
                                                            .append("title")
                                                            .text(d.Country+" "+d.Year+":"+x(d))
                                                          });
-                                // console.log(trace);
-                                 }
+								 
+								 
                           })
-                      .style("z-index","5")                     
+                      .style("z-index","5")
                       .style("fill", function(d) { return colorScale(color(d)); })
                       .style("stroke", "black") 
                       .transition()
@@ -348,13 +343,9 @@ div.label_content {
                         .transition()
                         .duration(500)
                         .ease(d3.easeBounce);
-         /**dot.append("title")
-        .text(function(d,i){return "Country Name:"+theNation(d)+"\n"+"GDP:"+x(d)+"\n"+"Life Expectancy"+y(d);});    **/
                 d3.select("#rangeBar").property("value",display_year)
-                   d3.select("#year_header").text(display_year)    
-                   
-      
-               
+                   d3.select("#year_header").text(display_year)
+				   d3.select("#heading").text("Gapminder World "+display_year)               
             }
 
             function display_bars()
@@ -369,7 +360,6 @@ div.label_content {
            
            function add_option(dataset)
     {
-        //console.log(dataset)
       var select = d3.select(".optionItems")
       .append("div")
         .text("Select Country 1")
@@ -380,7 +370,6 @@ div.label_content {
         .on("change", function(d) {
           var value = d3.select(this).property("value");
           barcountry1 = value;
-
           display_bars()
         });
 
@@ -419,6 +408,7 @@ div.label_content {
             var pillars = ["1st_pillar_Institutions","2nd_pillar_Infrastructure","3rd_pillar_Macroeconomic_environment","4th_pillar_Health_and_primary_education",
             "5th_pillar_Higher_education_and_training","6th_pillar_Goods_market_efficiency","7th_pillar_Labor_market_efficiency","8th_pillar_Financial_market_development",
             "9th_pillar_Technological_readiness","10th_pillar_Market_size","11th_pillar_Business_sophistication_","12th_pillar_Innovation"];
+			
             var total_bar_block_width = 100;
 
         function getColumnName(location)
@@ -544,16 +534,16 @@ div.label_content {
                 }
             });
             // the button to country the display of country label
-            var t=0;
+            var isLabelVisible=0;
             function labelShow(){
-                if(t%2==0){
+                if(isLabelVisible==1){
                    d3.selectAll(".countrynames")
                      .style("visibility", "hidden");
-                t=t+1;
+					isLabelVisible = 0;
                 }else{
                    d3.selectAll(".countrynames")
                      .style("visibility", "visible");
-                     t=t+1;
+                     isLabelVisible = 1;
                     }
                 }
         </script>
@@ -563,7 +553,7 @@ div.label_content {
      
     </div>
     <div class="selectChartBody" style=" float: left;">
-        <div class="selectChart"></div>
+        
         <span class="labelButton">choose to display/undisplay the country label:</span>
         <input type="button" class="labelButton" value="Country label" onclick="labelShow()"/> 
         <br/>
@@ -636,6 +626,13 @@ div.label_content {
                          .attr("dy", ".5em")
                          .attr("transform", "rotate(-8)");   
 
+			 // Add an x-axis label.
+            svgbar.append("text")
+               .attr("text-anchor", "end")
+               .attr("x", svgbar_width/2)
+               .attr("y", svgbar_height+60)
+               .text("Pillars of the Global Competitiveness Index");
+			   
               // Add a y-axis label.
             svgbar.append("text")
                .attr("class", "y label")
