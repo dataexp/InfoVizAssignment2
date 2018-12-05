@@ -528,9 +528,13 @@ div.label_content {
                     data['Global_Competitiveness_Index']=+data['Global_Competitiveness_Index'];
                     data['GDP']=+data['GDP'];
                     // Assign  the data object loaded to the global dataset variable
-                    dataset = data;
-
-                    generateVis();
+                    dataset = data;        
+                    
+                    add_option(dataset);
+                     
+ 
+                    //    
+                       generateVis();
                                         
                     d3.select("#rangeBar")
                       .on("click", function() { 
@@ -563,8 +567,7 @@ div.label_content {
         <span class="labelButton">choose to display/undisplay the country label:</span>
         <input type="button" class="labelButton" value="Country label" onclick="labelShow()"/> 
         <br/>
-        <p class="labelButton" style=" color: red">when the plot is static, you can click any bubble to display it's static trace</p>
-        <p class="labelButton" style=" color: red">when the plot is dynamic, you can choose the checkbox to mark any specific country's dynamic trace by reduce other counties' opacity</p>
+        <p class="labelButton" style=" color: green">when the plot is static, you can click any bubble to display it's static trace. To view all countries again, click start button.</p>
     </div>
     <!--
     
@@ -631,7 +634,16 @@ div.label_content {
                 .selectAll("text")
                          .attr("dx", "-4em")
                          .attr("dy", ".5em")
-                         .attr("transform", "rotate(-8)");    
+                         .attr("transform", "rotate(-8)");   
+
+              // Add a y-axis label.
+            svgbar.append("text")
+               .attr("class", "y label")
+               .attr("text-anchor", "end")
+               .attr("y", -marginBars.left)
+               .attr("dy", ".75em")
+               .attr("transform", "rotate(-90)")
+               .text("GCI Pillar values");   
        </script>
     </div>
     
