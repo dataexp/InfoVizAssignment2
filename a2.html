@@ -125,7 +125,7 @@ div.label_content {
             // 			.range([0,svg_width]);
             var xScale=d3.scaleLinear()
 			             .domain([0,500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000,200000])
-						 .range([0,40, 120, 200, 280, 360, 440, 520, 600, 640,680]);	
+						 .range([0,40, 120, 200, 280, 360, 440, 520, 600, 630,670]);	
 			var yScale=d3.scaleLinear()
 			             .domain([0,6])
 						 .range([svg_height,0], 0.1);
@@ -416,48 +416,15 @@ div.label_content {
         .text(function (d,i) {
          return d; });
     }
-			
-function getColumnName(location)
+			var pillars = ["1st_pillar_Institutions","2nd_pillar_Infrastructure","3rd_pillar_Macroeconomic_environment","4th_pillar_Health_and_primary_education",
+			"5th_pillar_Higher_education_and_training","6th_pillar_Goods_market_efficiency","7th_pillar_Labor_market_efficiency","8th_pillar_Financial_market_development",
+			"9th_pillar_Technological_readiness","10th_pillar_Market_size","11th_pillar_Business_sophistication_","12th_pillar_Innovation"];
+			var total_bar_block_width = 100;
+
+		function getColumnName(location)
 			{
-			column_name = "";
-			if(location == 0)
-			{
-			column_name = "1st_pillar_Institutions";
-			}
-			else if(location==1){
-						column_name = "2nd_pillar_Infrastructure";
-			}
-			else if(location==2){
-						column_name = "3rd_pillar_Macroeconomic_environment";
-			}
-			else if(location==3){
-						column_name = "4th_pillar_Health_and_primary_education";
-			}
-			else if(location==4){
-						column_name = "5th_pillar_Higher_education_and_training";
-			}
-			else if(location==5){
-						column_name = "6th_pillar_Goods_market_efficiency";
-			}
-			else if(location==6){
-						column_name = "7th_pillar_Labor_market_efficiency";
-			}
-			else if(location==7){
-						column_name = "8th_pillar_Financial_market_development";
-			}
-			else if(location==8){
-						column_name = "9th_pillar_Technological_readiness";
-			}
-			else if(location==9){
-						column_name = "10th_pillar_Market_size";
-			}
-			else if(location==10){
-						column_name = "11th_pillar_Business_sophistication_";
-			}
-			else if(location==11){
-						column_name = "11th_pillar_Business_sophistication_";
-			}
-			return column_name;
+				column_name = pillars[location];
+				return column_name;
 			}
 			
 			function addbars(filtered_datset_country,location,country_pos)
@@ -471,12 +438,11 @@ function getColumnName(location)
 										});
 				/******** HANDLE UPDATE SELECTION ************/
 				// Update the display of existing elelemnts to match new data
-				var bar_width = 30;
-				var total_width = 80;
+				 bar_width = 30;
 				
 				bars.transition()
 					.attr("x", function(d, i) {
-					start_pos = location * total_width;
+					start_pos = (location * total_bar_block_width)+17;
 					if(country_pos == 1)
 						return start_pos;
 					else
@@ -499,7 +465,7 @@ function getColumnName(location)
 				bars.enter()
 				   .append("rect")
 					.attr("x", function(d, i) {
-						start_pos = location * total_width;
+						start_pos = (location * total_bar_block_width)+17;
 					if(country_pos == 1)
 						return start_pos;
 					else
@@ -524,7 +490,7 @@ function getColumnName(location)
 			}
 		//timer	
          var i;
-		 function run(){
+		 function startstopClick(){
 			    if(i){
                 clearInterval(i);
 				$("#startButton").val("start");
@@ -629,7 +595,7 @@ function getColumnName(location)
 			//end
 		</script>
      <br/>
-     <input type="button" id="startButton" value="start" onclick="run()"/>     
+     <input type="button" id="startButton" value="start" onclick="startstopClick()"/>     
      <input type="range" name="points" min="2007" max="2017" step="1" value="0" id="rangeBar" style="width:650px">
      
     </div>
@@ -654,19 +620,19 @@ function getColumnName(location)
 
        <script>
 
-       	        var margin = {top: 10, right: 20, bottom: 80, left: 30};
-	   
-			var outer_width = 1000;
-			var outer_height = 200;
-			var svgbar_width = outer_width - margin.left - margin.right;
-			var svgbar_height = outer_height - margin.top - margin.bottom;	
+       	        var marginBars = {top: 10, right: 20, bottom: 80, left: 50};
+
+			var outer_width =  (total_bar_block_width * pillars.length) + marginBars.left+marginBars.right;
+			var outer_height = 300;
+			var svgbar_width = outer_width - marginBars.left - marginBars.right;
+			var svgbar_height = outer_height - marginBars.top - marginBars.bottom;	
 						
 		var svgbar = d3.select(".barchart")
 						.append("svg")
-						.attr("width", svgbar_width + margin.left + margin.right)
-						.attr("height", svgbar_height + margin.top + margin.bottom)
+						.attr("width", svgbar_width + marginBars.left + margin.right)
+						.attr("height", svgbar_height + marginBars.top + margin.bottom)
 						.append("g")
-						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+						.attr("transform", "translate(" + marginBars.left + "," + marginBars.top + ")");
 						
 		
 	   // part2
@@ -677,10 +643,11 @@ function getColumnName(location)
 	
 			// Create a scale object to nicely take care of positioning bars along the horizontal axis
 			// We don't set the domain yet as data isn't loaded
-			var xBarScale = d3.scaleLinear()
-							.domain([0, 5])
-							.range([0, svgbar_width]);
-						
+			var xBarScale = d3.scaleBand()
+							.domain(pillars)
+							.range([0, svgbar_width],0.1);
+			
+
 			//Define Y axis
 			var yBarAxis = d3.axisLeft()
 							  .scale(yBarScale)
@@ -701,7 +668,11 @@ function getColumnName(location)
 				.attr("class", "axis")
 				.attr("id", "x-axisbar")
 				.attr("transform", "translate(0," + svgbar_height + ")")
-				.call(xBarAxis);	
+				.call(xBarAxis)
+				.selectAll("text")
+						 .attr("dx", "-4em")
+                         .attr("dy", ".5em")
+                         .attr("transform", "rotate(-8)");	
        </script>
     </div>
     
